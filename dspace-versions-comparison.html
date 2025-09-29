@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSpace Angular - Comparação de Versões 7, 8 e 9</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --dspace7-color: #2E86AB;
+            --dspace8-color: #A23B72;
+            --dspace9-color: #F18F01;
+            --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-gradient);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        /* Language Toggle */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            background: transparent;
+        }
+
+        .lang-btn.active {
+            background: var(--dspace8-color);
+            color: white;
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: #f0f0f0;
+        }
+
+        /* Version Cards Grid */
+        .versions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .version-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .version-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .version-header {
+            padding: 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .version-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .version-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .version-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+
+        .version-content {
+            padding: 0;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            background: white;
+            border-bottom-color: currentColor;
+        }
+
+        .tab-content {
+            padding: 30px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Technical Specs */
+        .tech-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .tech-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid;
+            transition: var(--transition);
+        }
+
+        .feature-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .feature-item i {
+            margin-right: 15px;
+            margin-top: 2px;
+            font-size: 1.3rem;
+        }
+
+        .feature-content h4 {
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .feature-content p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        /* Comparison Matrix */
+        .comparison-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin: 40px 0;
+            overflow: hidden;
+        }
+
+        .comparison-header {
+            background: linear-gradient(135deg, var(--dspace7-color), var(--dspace9-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .comparison-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .comparison-table {
+            overflow-x: auto;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+        }
+
+        .comparison-table .version-col {
+            font-weight: 600;
+            color: white;
+            text-align: center;
+        }
+
+        .feature-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .feature-status.full {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .feature-status.partial {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .feature-status.none {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Documentation Links */
+        .docs-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .doc-link {
+            display: block;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+            border-left: 4px solid;
+        }
+
+        .doc-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .doc-link i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .doc-link h4 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .doc-link p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1.1rem;
+            }
+
+            .versions-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .language-toggle {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                justify-content: center;
+            }
+
+            .tech-specs {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px;
+            }
+        }
+
+        /* Color Classes */
+        .dspace7 { background-color: var(--dspace7-color); }
+        .dspace8 { background-color: var(--dspace8-color); }
+        .dspace9 { background-color: var(--dspace9-color); }
+
+        .text-dspace7 { color: var(--dspace7-color); }
+        .text-dspace8 { color: var(--dspace8-color); }
+        .text-dspace9 { color: var(--dspace9-color); }
+
+        .border-dspace7 { border-left-color: var(--dspace7-color); }
+        .border-dspace8 { border-left-color: var(--dspace8-color); }
+        .border-dspace9 { border-left-color: var(--dspace9-color); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Language Toggle -->
+        <div class="language-toggle">
+            <i class="fas fa-globe"></i>
+            <button class="lang-btn active" onclick="switchLanguage('pt')">Português</button>
+            <button class="lang-btn" onclick="switchLanguage('es')">Español</button>
+        </div>
+
+        <!-- Header -->
+        <div class="header animate__animated animate__fadeInDown">
+            <h1 class="lang-content" data-pt="DSpace Angular - Comparação de Versões" data-es="DSpace Angular - Comparación de Versiones">
+                DSpace Angular - Comparação de Versões
+            </h1>
+            <p class="lang-content" data-pt="Funcionalidades Avançadas de Gestão de Repositório - Versões 7, 8 e 9" 
+               data-es="Funcionalidades Avanzadas de Gestión de Repositorio - Versiones 7, 8 y 9">
+                Funcionalidades Avançadas de Gestão de Repositório - Versões 7, 8 e 9
+            </p>
+        </div>
+
+        <!-- Version Cards -->
+        <div class="versions-grid">
+            <!-- DSpace 7 -->
+            <div class="version-card animate__animated animate__fadeInUp" data-version="7">
+                <div class="version-header dspace7">
+                    <h2>DSpace 7</h2>
+                    <span class="version-status">LTS - Julho 2022</span>
+                </div>
+                <div class="version-content">
+                    <div class="tabs">
+                        <button class="tab-btn active text-dspace7" onclick="switchTab(7, 'tech')">
+                            <i class="fas fa-cogs"></i>
+                            <span class="lang-content" data-pt="Tecnologia" data-es="Tecnología">Tecnologia</span>
+                        </button>
+                        <button class="tab-btn text-dspace7" onclick="switchTab(7, 'features')">
+                            <i class="fas fa-star"></i>
+                            <span class="lang-content" data-pt="Funcionalidades" data-es="Funcionalidades">Funcionalidades</span>
+                        </button>
+                    </div>
+
+                    <div id="tech-7" class="tab-content active">
+                        <div class="tech-specs">
+                            <div class="tech-item border-dspace7">
+                                <i class="fab fa-java text-dspace7"></i>
+                                <div>
+                                    <strong>Java 11+</strong><br>
+                                    <small>Runtime</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace7">
+                                <i class="fab fa-angular text-dspace7"></i>
+                                <div>
+                                    <strong>Angular 14</strong><br>
+                                    <small>Frontend</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace7">
+                                <i class="fas fa-search text-dspace7"></i>
+                                <div>
+                                    <strong>Solr 8.x</strong><br>
+                                    <small>Search Engine</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace7">
+                                <i class="fas fa-database text-dspace7"></i>
+                                <div>
+                                    <strong>PostgreSQL 11+</strong><br>
+                                    <small>Database</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace7">
+                                <i class="fab fa-yarn text-dspace7"></i>
+                                <div>
+                                    <strong class="lang-content" data-pt="Sistema Yarn" data-es="Sistema Yarn">Sistema Yarn</strong><br>
+                                    <small>Build</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace7">
+                                <i class="fab fa-bootstrap text-dspace7"></i>
+                                <div>
+                                    <strong>Bootstrap 4</strong><br>
+                                    <small>CSS Framework</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="features-7" class="tab-content">
+                        <div class="features-grid">
+                            <div class="feature-item border-dspace7">
+                                <i class="fas fa-sitemap text-dspace7"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Entidades Configuráveis" data-es="Entidades Configurables">Entidades Configuráveis</h4>
+                                    <p class="lang-content" data-pt="Person, Publication, Project, OrgUnit, Journal com relacionamentos" 
+                                       data-es="Person, Publication, Project, OrgUnit, Journal con relaciones">
+                                       Person, Publication, Project, OrgUnit, Journal com relacionamentos
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace7">
+                                <i class="fab fa-orcid text-dspace7"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Integração ORCID Básica" data-es="Integración ORCID Básica">Integração ORCID Básica</h4>
+                                    <p class="lang-content" data-pt="Sincronização inicial e perfis de pesquisador" 
+                                       data-es="Sincronización inicial y perfiles de investigador">
+                                       Sincronização inicial e perfis de pesquisador
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace7">
+                                <i class="fas fa-project-diagram text-dspace7"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Workflows Configuráveis" data-es="Flujos de Trabajo Configurables">Workflows Configuráveis</h4>
+                                    <p class="lang-content" data-pt="Sistema de curadoria e aprovação personalizável" 
+                                       data-es="Sistema de curaduría y aprobación personalizable">
+                                       Sistema de curadoria e aprovação personalizável
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace7">
+                                <i class="fas fa-shield-alt text-dspace7"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Embargos Melhorados" data-es="Embargos Mejorados">Embargos Melhorados</h4>
+                                    <p class="lang-content" data-pt="Controle de acesso em nível de item e bitstream" 
+                                       data-es="Control de acceso a nivel de item y bitstream">
+                                       Controle de acesso em nível de item e bitstream
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace7">
+                                <i class="fas fa-envelope text-dspace7"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Notificações Email" data-es="Notificaciones Email">Notificações Email</h4>
+                                    <p class="lang-content" data-pt="Sistema de subscrições e alertas automáticos" 
+                                       data-es="Sistema de suscripciones y alertas automáticas">
+                                       Sistema de subscrições e alertas automáticos
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DSpace 8 -->
+            <div class="version-card animate__animated animate__fadeInUp animate__delay-1s" data-version="8">
+                <div class="version-header dspace8">
+                    <h2>DSpace 8</h2>
+                    <span class="version-status">Current - Março 2024</span>
+                </div>
+                <div class="version-content">
+                    <div class="tabs">
+                        <button class="tab-btn active text-dspace8" onclick="switchTab(8, 'tech')">
+                            <i class="fas fa-cogs"></i>
+                            <span class="lang-content" data-pt="Tecnologia" data-es="Tecnología">Tecnologia</span>
+                        </button>
+                        <button class="tab-btn text-dspace8" onclick="switchTab(8, 'features')">
+                            <i class="fas fa-star"></i>
+                            <span class="lang-content" data-pt="Funcionalidades" data-es="Funcionalidades">Funcionalidades</span>
+                        </button>
+                    </div>
+
+                    <div id="tech-8" class="tab-content active">
+                        <div class="tech-specs">
+                            <div class="tech-item border-dspace8">
+                                <i class="fab fa-java text-dspace8"></i>
+                                <div>
+                                    <strong>Java 11+</strong><br>
+                                    <small>Runtime</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace8">
+                                <i class="fab fa-angular text-dspace8"></i>
+                                <div>
+                                    <strong>Angular 17</strong><br>
+                                    <small>Frontend</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace8">
+                                <i class="fas fa-search text-dspace8"></i>
+                                <div>
+                                    <strong class="lang-content" data-pt="Solr 8.x (compatível)" data-es="Solr 8.x (compatible)">Solr 8.x (compatível)</strong><br>
+                                    <small>Search Engine</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace8">
+                                <i class="fas fa-database text-dspace8"></i>
+                                <div>
+                                    <strong>PostgreSQL 13+</strong><br>
+                                    <small>Database</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace8">
+                                <i class="fas fa-leaf text-dspace8"></i>
+                                <div>
+                                    <strong>Spring Boot 3.4</strong><br>
+                                    <small>Backend Framework</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace8">
+                                <i class="fab fa-bootstrap text-dspace8"></i>
+                                <div>
+                                    <strong>Bootstrap 4.6</strong><br>
+                                    <small>CSS Framework</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="features-8" class="tab-content">
+                        <div class="features-grid">
+                            <div class="feature-item border-dspace8">
+                                <i class="fas fa-plug text-dspace8"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Integração OpenAIRE" data-es="Integración OpenAIRE">Integração OpenAIRE</h4>
+                                    <p class="lang-content" data-pt="Compliance completo com diretrizes OpenAIRE" 
+                                       data-es="Cumplimiento completo con directrices OpenAIRE">
+                                       Compliance completo com diretrizes OpenAIRE
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace8">
+                                <i class="fas fa-bell text-dspace8"></i>
+                                <div class="feature-content">
+                                    <h4>COAR Notify Protocol</h4>
+                                    <p class="lang-content" data-pt="Notificações padronizadas entre repositórios" 
+                                       data-es="Notificaciones estandarizadas entre repositorios">
+                                       Notificações padronizadas entre repositórios
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace8">
+                                <i class="fab fa-orcid text-dspace8"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="ORCID Aprimorado" data-es="ORCID Mejorado">ORCID Aprimorado</h4>
+                                    <p class="lang-content" data-pt="Sincronização bidirecional e perfis enriquecidos" 
+                                       data-es="Sincronización bidireccional y perfiles enriquecidos">
+                                       Sincronização bidirecional e perfis enriquecidos
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace8">
+                                <i class="fas fa-universal-access text-dspace8"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Acessibilidade WCAG 2.1" data-es="Accesibilidad WCAG 2.1">Acessibilidade WCAG 2.1</h4>
+                                    <p class="lang-content" data-pt="Melhorias significativas de acessibilidade" 
+                                       data-es="Mejoras significativas de accesibilidad">
+                                       Melhorias significativas de acessibilidade
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace8">
+                                <i class="fas fa-tachometer-alt text-dspace8"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Performance Otimizada" data-es="Rendimiento Optimizado">Performance Otimizada</h4>
+                                    <p class="lang-content" data-pt="SSR melhorado e workflows mais eficientes" 
+                                       data-es="SSR mejorado y flujos de trabajo más eficientes">
+                                       SSR melhorado e workflows mais eficientes
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DSpace 9 -->
+            <div class="version-card animate__animated animate__fadeInUp animate__delay-2s" data-version="9">
+                <div class="version-header dspace9">
+                    <h2>DSpace 9</h2>
+                    <span class="version-status">Next Gen - Novembro 2024</span>
+                </div>
+                <div class="version-content">
+                    <div class="tabs">
+                        <button class="tab-btn active text-dspace9" onclick="switchTab(9, 'tech')">
+                            <i class="fas fa-cogs"></i>
+                            <span class="lang-content" data-pt="Tecnologia" data-es="Tecnología">Tecnologia</span>
+                        </button>
+                        <button class="tab-btn text-dspace9" onclick="switchTab(9, 'features')">
+                            <i class="fas fa-star"></i>
+                            <span class="lang-content" data-pt="Funcionalidades" data-es="Funcionalidades">Funcionalidades</span>
+                        </button>
+                    </div>
+
+                    <div id="tech-9" class="tab-content active">
+                        <div class="tech-specs">
+                            <div class="tech-item border-dspace9">
+                                <i class="fab fa-java text-dspace9"></i>
+                                <div>
+                                    <strong>Java 17+</strong><br>
+                                    <small>Runtime</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace9">
+                                <i class="fab fa-angular text-dspace9"></i>
+                                <div>
+                                    <strong>Angular 18</strong><br>
+                                    <small>Frontend</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace9">
+                                <i class="fas fa-search text-dspace9"></i>
+                                <div>
+                                    <strong class="lang-content" data-pt="Solr 9.x (obrigatório)" data-es="Solr 9.x (obligatorio)">Solr 9.x (obrigatório)</strong><br>
+                                    <small>Search Engine</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace9">
+                                <i class="fas fa-database text-dspace9"></i>
+                                <div>
+                                    <strong>PostgreSQL 15+</strong><br>
+                                    <small>Database</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace9">
+                                <i class="fab fa-npm text-dspace9"></i>
+                                <div>
+                                    <strong class="lang-content" data-pt="NPM Puro" data-es="NPM Puro">NPM Puro</strong><br>
+                                    <small class="lang-content" data-pt="Sem Yarn" data-es="Sin Yarn">Sem Yarn</small>
+                                </div>
+                            </div>
+                            <div class="tech-item border-dspace9">
+                                <i class="fab fa-bootstrap text-dspace9"></i>
+                                <div>
+                                    <strong>Bootstrap 5</strong><br>
+                                    <small>CSS Framework</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="features-9" class="tab-content">
+                        <div class="features-grid">
+                            <div class="feature-item border-dspace9">
+                                <i class="fas fa-graduation-cap text-dspace9"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Integração OpenAlex" data-es="Integración OpenAlex">Integração OpenAlex</h4>
+                                    <p class="lang-content" data-pt="Enriquecimento automático de metadados acadêmicos" 
+                                       data-es="Enriquecimiento automático de metadatos académicos">
+                                       Enriquecimento automático de metadados acadêmicos
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace9">
+                                <i class="fas fa-chart-bar text-dspace9"></i>
+                                <div class="feature-content">
+                                    <h4>Matomo Analytics</h4>
+                                    <p class="lang-content" data-pt="Analytics nativo com privacidade e métricas avançadas" 
+                                       data-es="Analytics nativo con privacidad y métricas avanzadas">
+                                       Analytics nativo com privacidade e métricas avançadas
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace9">
+                                <i class="fas fa-id-card text-dspace9"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Autenticação SAML" data-es="Autenticación SAML">Autenticação SAML</h4>
+                                    <p class="lang-content" data-pt="Single Sign-On integrado nativamente" 
+                                       data-es="Inicio de sesión único integrado nativamente">
+                                       Single Sign-On integrado nativamente
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace9">
+                                <i class="fas fa-map-marked-alt text-dspace9"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Mapas Geoespaciais" data-es="Mapas Geoespaciales">Mapas Geoespaciais</h4>
+                                    <p class="lang-content" data-pt="Visualização geográfica de dados e coleções" 
+                                       data-es="Visualización geográfica de datos y colecciones">
+                                       Visualização geográfica de dados e coleções
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="feature-item border-dspace9">
+                                <i class="fas fa-cloud text-dspace9"></i>
+                                <div class="feature-content">
+                                    <h4 class="lang-content" data-pt="Armazenamento JClouds" data-es="Almacenamiento JClouds">Armazenamento JClouds</h4>
+                                    <p class="lang-content" data-pt="Suporte nativo para AWS S3, Azure, Google Cloud" 
+                                       data-es="Soporte nativo para AWS S3, Azure, Google Cloud">
+                                       Suporte nativo para AWS S3, Azure, Google Cloud
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Comparison Matrix -->
+        <div class="comparison-section animate__animated animate__fadeInUp">
+            <div class="comparison-header">
+                <h2 class="lang-content" data-pt="Matriz de Compatibilidade e Funcionalidades" data-es="Matriz de Compatibilidad y Funcionalidades">
+                    Matriz de Compatibilidade e Funcionalidades
+                </h2>
+                <p class="lang-content" data-pt="Comparação detalhada entre as versões do DSpace Angular" 
+                   data-es="Comparación detallada entre las versiones de DSpace Angular">
+                   Comparação detalhada entre as versões do DSpace Angular
+                </p>
+            </div>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="lang-content" data-pt="Funcionalidade" data-es="Funcionalidad">Funcionalidade</th>
+                            <th class="version-col dspace7">DSpace 7</th>
+                            <th class="version-col dspace8">DSpace 8</th>
+                            <th class="version-col dspace9">DSpace 9</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong class="lang-content" data-pt="Entidades Configuráveis" data-es="Entidades Configurables">Entidades Configuráveis</strong></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Completo" data-es="Completo">Completo</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Aprimorado" data-es="Mejorado">Aprimorado</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check-double"></i> <span class="lang-content" data-pt="Avançado" data-es="Avanzado">Avançado</span></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong class="lang-content" data-pt="Integração ORCID" data-es="Integración ORCID">Integração ORCID</strong></td>
+                            <td><span class="feature-status partial"><i class="fas fa-minus"></i> <span class="lang-content" data-pt="Básico" data-es="Básico">Básico</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Bidirecional" data-es="Bidireccional">Bidirecional</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check-double"></i> <span class="lang-content" data-pt="Completo+" data-es="Completo+">Completo+</span></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenAIRE</strong></td>
+                            <td><span class="feature-status none"><i class="fas fa-times"></i> <span class="lang-content" data-pt="Não disponível" data-es="No disponible">Não disponível</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Completo" data-es="Completo">Completo</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Mantido" data-es="Mantenido">Mantido</span></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenAlex</strong></td>
+                            <td><span class="feature-status none"><i class="fas fa-times"></i> <span class="lang-content" data-pt="Não disponível" data-es="No disponible">Não disponível</span></span></td>
+                            <td><span class="feature-status none"><i class="fas fa-times"></i> <span class="lang-content" data-pt="Não disponível" data-es="No disponible">Não disponível</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Nativo" data-es="Nativo">Nativo</span></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>COAR Notify</strong></td>
+                            <td><span class="feature-status none"><i class="fas fa-times"></i> <span class="lang-content" data-pt="Não disponível" data-es="No disponible">Não disponível</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Implementado" data-es="Implementado">Implementado</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Mantido" data-es="Mantenido">Mantido</span></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong class="lang-content" data-pt="Acessibilidade WCAG" data-es="Accesibilidad WCAG">Acessibilidade WCAG</strong></td>
+                            <td><span class="feature-status partial"><i class="fas fa-minus"></i> WCAG 2.0</span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> WCAG 2.1</span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check-double"></i> WCAG 2.2</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong class="lang-content" data-pt="Autenticação SAML" data-es="Autenticación SAML">Autenticação SAML</strong></td>
+                            <td><span class="feature-status partial"><i class="fas fa-cog"></i> <span class="lang-content" data-pt="Via plugin" data-es="Via plugin">Via plugin</span></span></td>
+                            <td><span class="feature-status partial"><i class="fas fa-cog"></i> <span class="lang-content" data-pt="Via plugin" data-es="Via plugin">Via plugin</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-check"></i> <span class="lang-content" data-pt="Nativo" data-es="Nativo">Nativo</span></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Analytics</strong></td>
+                            <td><span class="feature-status partial"><i class="fas fa-chart-line"></i> Solr Stats</span></td>
+                            <td><span class="feature-status partial"><i class="fas fa-chart-line"></i> Solr Stats+</span></td>
+                            <td><span class="feature-status full"><i class="fas fa-chart-bar"></i> Matomo</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong class="lang-content" data-pt="Armazenamento em Nuvem" data-es="Almacenamiento en Nube">Armazenamento em Nuvem</strong></td>
+                            <td><span class="feature-status none"><i class="fas fa-times"></i> <span class="lang-content" data-pt="Não nativo" data-es="No nativo">Não nativo</span></span></td>
+                            <td><span class="feature-status partial"><i class="fas fa-cog"></i> <span class="lang-content" data-pt="Configuração manual" data-es="Configuración manual">Configuração manual</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-cloud"></i> JClouds</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong class="lang-content" data-pt="Mapas Geoespaciais" data-es="Mapas Geoespaciales">Mapas Geoespaciais</strong></td>
+                            <td><span class="feature-status none"><i class="fas fa-times"></i> <span class="lang-content" data-pt="Não disponível" data-es="No disponible">Não disponível</span></span></td>
+                            <td><span class="feature-status none"><i class="fas fa-times"></i> <span class="lang-content" data-pt="Não disponível" data-es="No disponible">Não disponível</span></span></td>
+                            <td><span class="feature-status full"><i class="fas fa-map-marked-alt"></i> <span class="lang-content" data-pt="Implementado" data-es="Implementado">Implementado</span></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Documentation Section -->
+        <div class="docs-section">
+            <div class="text-center">
+                <h2 class="lang-content" data-pt="Documentação e Recursos" data-es="Documentación y Recursos">
+                    Documentação e Recursos
+                </h2>
+                <p class="lang-content" data-pt="Links oficiais e recursos para cada versão do DSpace" 
+                   data-es="Enlaces oficiales y recursos para cada versión de DSpace">
+                   Links oficiais e recursos para cada versão do DSpace
+                </p>
+            </div>
+            <div class="docs-grid">
+                <a href="https://wiki.lyrasis.org/display/DSDOC7x" target="_blank" class="doc-link border-dspace7">
+                    <i class="fas fa-book text-dspace7"></i>
+                    <h4>DSpace 7 Documentation</h4>
+                    <p class="lang-content" data-pt="Documentação oficial completa do DSpace 7 com guias de instalação e configuração" 
+                       data-es="Documentación oficial completa de DSpace 7 con guías de instalación y configuración">
+                       Documentação oficial completa do DSpace 7 com guias de instalação e configuração
+                    </p>
+                </a>
+
+                <a href="https://wiki.lyrasis.org/display/DSDOC8x" target="_blank" class="doc-link border-dspace8">
+                    <i class="fas fa-file-alt text-dspace8"></i>
+                    <h4>DSpace 8 Documentation</h4>
+                    <p class="lang-content" data-pt="Guias atualizados para DSpace 8 incluindo novas funcionalidades e migração" 
+                       data-es="Guías actualizadas para DSpace 8 incluyendo nuevas funcionalidades y migración">
+                       Guias atualizados para DSpace 8 incluindo novas funcionalidades e migração
+                    </p>
+                </a>
+
+                <a href="https://wiki.lyrasis.org/display/DSDOC9x" target="_blank" class="doc-link border-dspace9">
+                    <i class="fas fa-rocket text-dspace9"></i>
+                    <h4>DSpace 9 Documentation</h4>
+                    <p class="lang-content" data-pt="Documentação mais recente com recursos avançados e integração de nuvem" 
+                       data-es="Documentación más reciente con recursos avanzados e integración en la nube">
+                       Documentação mais recente com recursos avançados e integração de nuvem
+                    </p>
+                </a>
+
+                <a href="https://github.com/DSpace/DSpace-angular" target="_blank" class="doc-link border-dspace8">
+                    <i class="fab fa-github text-dspace8"></i>
+                    <h4>GitHub Repository</h4>
+                    <p class="lang-content" data-pt="Código fonte oficial, issues e contribuições da comunidade DSpace Angular" 
+                       data-es="Código fuente oficial, issues y contribuciones de la comunidad DSpace Angular">
+                       Código fonte oficial, issues e contribuições da comunidade DSpace Angular
+                    </p>
+                </a>
+
+                <a href="https://wiki.lyrasis.org/#all-updates" target="_blank" class="doc-link border-dspace7">
+                    <i class="fas fa-cogs text-dspace7"></i>
+                    <h4 class="lang-content" data-pt="Configuração e Customização" data-es="Configuración y Personalización">Configuração e Customização</h4>
+                    <p class="lang-content" data-pt="Guias detalhados para configurar entidades, workflows e funcionalidades avançadas" 
+                       data-es="Guías detalladas para configurar entidades, flujos de trabajo y funcionalidades avanzadas">
+                       Guias detalhados para configurar entidades, workflows e funcionalidades avançadas
+                    </p>
+                </a>
+
+                <a href="https://wiki.lyrasis.org/#all-updates" target="_blank" class="doc-link border-dspace9">
+                    <i class="fas fa-clipboard-list text-dspace9"></i>
+                    <h4 class="lang-content" data-pt="Notas de Versão" data-es="Notas de Versión">Notas de Versão</h4>
+                    <p class="lang-content" data-pt="Changelog completo com todas as mudanças, melhorias e correções por versão" 
+                       data-es="Changelog completo con todos los cambios, mejoras y correcciones por versión">
+                       Changelog completo com todas as mudanças, melhorias e correções por versão
+                    </p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Current language
+        let currentLanguage = 'pt';
+
+        // Language switching functionality
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update all language content
+            document.querySelectorAll('.lang-content').forEach(element => {
+                const content = element.getAttribute('data-' + lang);
+                if (content) {
+                    element.textContent = content;
+                }
+            });
+
+            // Animate language change
+            document.body.style.opacity = '0.8';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 200);
+        }
+
+        // Tab switching functionality
+        function switchTab(version, tabType) {
+            // Hide all tab contents for this version
+            const versionTabs = document.querySelectorAll(`[id^="${tabType}-${version}"], [id^="tech-${version}"], [id^="features-${version}"]`);
+            versionTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons for this version
+            const versionCard = document.querySelector(`[data-version="${version}"]`);
+            versionCard.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(`${tabType}-${version}`).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Add animation
+            const activeTab = document.getElementById(`${tabType}-${version}`);
+            activeTab.style.opacity = '0';
+            setTimeout(() => {
+                activeTab.style.opacity = '1';
+                activeTab.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        // Smooth scroll for anchor links
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add intersection observer for animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate__animated');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Observe all animatable elements
+            document.querySelectorAll('.version-card, .comparison-section, .docs-section').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Add hover effects to feature items
+            document.querySelectorAll('.feature-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(10px) scale(1.02)';
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0) scale(1)';
+                });
+            });
+
+            // Add click animation to version cards
+            document.querySelectorAll('.version-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.closest('.tab-btn')) {
+                        this.style.transform = 'scale(1.05)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1) translateY(-10px)';
+                        }, 150);
+                    }
+                });
+            });
+
+            // Enhanced table interactions
+            document.querySelectorAll('.comparison-table tbody tr').forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                    this.style.transform = 'scale(1.01)';
+                });
+
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                    this.style.transform = 'scale(1)';
+                });
+            });
+
+            // Animate numbers and stats
+            const animateNumbers = () => {
+                document.querySelectorAll('.version-status').forEach(status => {
+                    status.style.animation = 'pulse 2s infinite';
+                });
+            };
+
+            setTimeout(animateNumbers, 1000);
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    // Add focus indicators
+                    document.body.classList.add('keyboard-nav');
+                }
+
+                if (e.key === '1' || e.key === '2' || e.key === '3') {
+                    const version = e.key === '1' ? '7' : e.key === '2' ? '8' : '9';
+                    const card = document.querySelector(`[data-version="${version}"]`);
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+
+            document.addEventListener('mousedown', function() {
+                document.body.classList.remove('keyboard-nav');
+            });
+        });
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+
+            .keyboard-nav *:focus {
+                outline: 3px solid var(--dspace8-color);
+                outline-offset: 2px;
+            }
+
+            .feature-item {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .comparison-table tbody tr {
+                transition: all 0.2s ease;
+            }
+
+            .tab-content {
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+
+            .version-card {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
